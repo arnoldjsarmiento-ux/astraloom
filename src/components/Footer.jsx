@@ -46,12 +46,12 @@ export default function Footer() {
               >
                 <div className="flex items-center space-x-2 mb-6">
                   <div className="flex items-center space-x-1">
-                    <Code className="h-8 w-8 text-primary-400" />
-                    <Smartphone className="h-6 w-6 text-primary-500" />
-                    <Cloud className="h-6 w-6 text-primary-600" />
-                    <Database className="h-6 w-6 text-primary-700" />
+                    <img
+                      src="/logo_ft.png"
+                      alt="AstraLoom"
+                      className="h-10 w-auto object-contain"
+                    />
                   </div>
-                  <span className="text-2xl font-bold">Vynix</span>
                 </div>
                 <p className="text-gray-300 mb-6 max-w-md">
                   Premier IT development agency specializing in cutting-edge web applications,
@@ -80,7 +80,7 @@ export default function Footer() {
                     <X className="h-5 w-5 group-hover:scale-110 transition-transform" />
                   </a>
                   <a
-                    href="mailto:hello@vynix.com"
+                    href="mailto:hello@astraloom.com"
                     className="p-2 bg-gray-800 hover:bg-primary-600 rounded-lg transition-colors duration-200 group"
                     aria-label="Email"
                   >
@@ -168,22 +168,20 @@ export default function Footer() {
               <div className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5 text-primary-400 flex-shrink-0" />
                 <div>
-                  <p className="text-gray-300">123 Tech Street</p>
-                  <p className="text-gray-300">San Francisco, CA 94105</p>
+                  <p className="text-gray-300">125 Rizal Ave. Ext. cor. Leoño St.</p>
+                  <p className="text-gray-300">Barangay Tañong, Malabon City, 1470 Metro Manila, Philippines</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary-400 flex-shrink-0" />
                 <div>
-                  <p className="text-gray-300">+1 (555) 123-4567</p>
-                  <p className="text-gray-300">+1 (555) 987-6543</p>
+                  <p className="text-gray-300">+63 (970) 882-0393</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-primary-400 flex-shrink-0" />
                 <div>
-                  <p className="text-gray-300">hello@vynix.com</p>
-                  <p className="text-gray-300">support@vynix.com</p>
+                  <p className="text-gray-300">hello@astraloom.com</p>
                 </div>
               </div>
             </div>
@@ -199,7 +197,7 @@ export default function Footer() {
         >
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © 2025 Vynix Innovations. All rights reserved.
+              © 2025 AstraLoom Innovations. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <a

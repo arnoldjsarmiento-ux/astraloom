@@ -14,19 +14,19 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email Us',
-    details: ['hello@vynix.pro', 'support@vynix.pro'],
+    details: ['hello@astraloom.pro'],
     color: 'from-blue-500 to-blue-600',
   },
   {
     icon: Phone,
     title: 'Call Us',
-    details: ['+1 (555) 123-4567', '+1 (555) 987-6543'],
+    details: ['+63(970) 882 0393'],
     color: 'from-green-500 to-green-600',
   },
   {
     icon: MapPin,
     title: 'Visit Us',
-    details: ['123 Tech Street', 'San Francisco, CA 94105'],
+    details: ['Barangay Tañong, Malabon City, 1470 Metro Manila, Philippines'],
     color: 'from-purple-500 to-purple-600',
   },
   {
@@ -178,7 +178,7 @@ export default function Contact() {
               viewport={{ once: true }}
               className="mt-12 bg-gray-50 rounded-xl p-6"
             >
-              <h4 className="font-semibold text-gray-900 mb-4">Why Choose Vynix Spark?</h4>
+              <h4 className="font-semibold text-gray-900 mb-4">Why Choose AstraLoom?</h4>
               <ul className="space-y-2">
                 {reasons.map((reason) => (
                   <li key={reason} className="flex items-center text-sm text-gray-600">

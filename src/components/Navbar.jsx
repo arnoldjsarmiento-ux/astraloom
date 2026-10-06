@@ -35,12 +35,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 px-4">
           <a href="#home" className="flex items-center space-x-2">
             <div className="flex items-center space-x-1">
-              <Code className="h-8 w-8 text-primary-600" />
-              <Smartphone className="h-6 w-6 text-primary-500" />
-              <Cloud className="h-6 w-6 text-primary-400" />
-              <Database className="h-6 w-6 text-primary-300" />
+              <img
+                src="/logo.png"
+                alt="PacificStack"
+                className="h-10 w-auto object-contain"
+              />
             </div>
-            <span className="text-xl font-bold gradient-text">Vynix</span>
           </a>
 
           <div className="hidden md:flex items-center space-x-8">

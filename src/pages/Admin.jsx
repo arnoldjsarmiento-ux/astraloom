@@ -16,12 +16,13 @@ export default function Admin() {
         <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
           <div className="flex items-center space-x-2 mb-6">
             <div className="flex items-center space-x-1">
-              <Code className="h-7 w-7 text-primary-600" />
-              <Smartphone className="h-5 w-5 text-primary-500" />
-              <Cloud className="h-5 w-5 text-primary-400" />
-              <Database className="h-5 w-5 text-primary-300" />
+              <img
+                src="/logo.png"
+                alt="AstraLoom"
+                className="h-10 w-auto object-contain"
+              />
             </div>
-            <span className="text-xl font-bold gradient-text">Vynix</span>
+            <span className="text-xl font-bold gradient-text">AstraLoom</span>
           </div>
 
           <div className="flex items-center space-x-3 mb-6">
@@ -50,7 +51,7 @@ export default function Admin() {
                 type="email"
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                placeholder="admin@vynix.pro"
+                placeholder="admin@astraloom.pro"
               />
             </div>
             <div>

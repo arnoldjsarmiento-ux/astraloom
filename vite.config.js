@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://vynixspark.pro',
+        target: 'https://PacificStack.pro',
         changeOrigin: true,
         secure: true,
       },

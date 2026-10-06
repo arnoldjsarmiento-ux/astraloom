@@ -1,6 +1,6 @@
-# VynixSpark Frontend
+# PacificStack Frontend
 
-React clone of [vynixspark.pro](https://vynixspark.pro/) — premier IT development agency site.
+React clone of [PacificStack.pro](https://PacificStack.pro/) — premier IT development agency site.
 
 ## Stack
 

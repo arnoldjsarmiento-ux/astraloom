@@ -142,7 +142,7 @@ export default function Register() {
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Application Submitted!</h1>
           <p className="text-gray-600 mb-6">
-            Thank you for your interest in joining Vynix Innovations. We&apos;ve received your
+            Thank you for your interest in joining AstraLoom Innovations. We&apos;ve received your
             application and will review it carefully.
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
@@ -177,12 +177,13 @@ export default function Register() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center space-x-2 mb-6">
             <div className="flex items-center space-x-1">
-              <Code className="h-8 w-8 text-primary-600" />
-              <Smartphone className="h-6 w-6 text-primary-500" />
-              <Cloud className="h-6 w-6 text-primary-400" />
-              <Database className="h-6 w-6 text-primary-300" />
+              <img
+                src="/logo.png"
+                alt="AstraLoom"
+                className="h-10 w-auto object-contain"
+              />
             </div>
-            <span className="text-3xl font-bold gradient-text">Vynix</span>
+            <span className="text-3xl font-bold gradient-text">AstraLoom</span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Join Our Team</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -533,7 +534,7 @@ export default function Register() {
               </h2>
               <div>
                 <label htmlFor="coverLetter" className="block text-sm font-medium text-gray-700 mb-2">
-                  Tell us about yourself and why you want to join Vynix Innovations *
+                  Tell us about yourself and why you want to join AstraLoom Innovations *
                 </label>
                 <textarea
                   id="coverLetter"
