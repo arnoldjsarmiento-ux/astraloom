@@ -1,6 +1,6 @@
-# PacificStack Frontend
+# AstraLoom Frontend
 
-React clone of [PacificStack.pro](https://PacificStack.pro/) — premier IT development agency site.
+React clone of [AstraLoom.pro](https://AstraLoom.pro/) — premier IT development agency site.
 
 ## Stack
 
