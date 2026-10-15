@@ -4,20 +4,18 @@ import {
   Briefcase,
   Camera,
   CheckCircle,
-  Cloud,
-  Code,
-  Database,
   FileText,
   Globe,
   Info,
   Mail,
   MapPin,
   Phone,
-  Smartphone,
   User,
   X,
 } from 'lucide-react'
 import { GitHubIcon, LinkedInIcon } from '../components/icons'
+import Logo from '../components/Logo'
+import { createTeamRegistration } from '../api/client'
 
 const initialForm = {
   firstName: '',
@@ -63,6 +61,7 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
+  const [submitError, setSubmitError] = useState('')
 
   const onChange = (event) => {
     const { name, value } = event.target
@@ -106,28 +105,22 @@ export default function Register() {
     setForm(initialForm)
     setAvatarPreview(null)
     setError('')
+    setSubmitError('')
   }
 
   const onSubmit = async (event) => {
     event.preventDefault()
     setSubmitting(true)
-    setError('')
+    setSubmitError('')
 
     try {
-      const response = await fetch('/api/team-registrations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
-      const result = await response.json()
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to submit application')
-      }
+      await createTeamRegistration(form)
       setSubmitted(true)
     } catch (err) {
       console.error('Application submission error:', err)
-      // Keep demo usable when API is unavailable
-      setSubmitted(true)
+      setSubmitError(
+        "Sorry, we couldn't submit your application. Please try again or email us at hello@astraloom.pro.",
+      )
     } finally {
       setSubmitting(false)
     }
@@ -153,7 +146,7 @@ export default function Register() {
                 <ul className="text-sm text-blue-700 mt-2 space-y-1">
                   <li>• Our team will review your application</li>
                   <li>• We&apos;ll contact you within 3-5 business days</li>
-                  <li>• If approved, you&apos;ll receive admin access</li>
+                  <li>• If shortlisted, we&apos;ll invite you to an interview</li>
                 </ul>
               </div>
             </div>
@@ -175,16 +168,9 @@ export default function Register() {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center space-x-2 mb-6">
-            <div className="flex items-center space-x-1">
-              <img
-                src="/logo.png"
-                alt="AstraLoom"
-                className="h-10 w-auto object-contain"
-              />
-            </div>
-            <span className="text-3xl font-bold gradient-text">AstraLoom</span>
-          </div>
+          <Link to="/" className="flex justify-center mb-6" aria-label="AstraLoom home">
+            <Logo />
+          </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Join Our Team</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Ready to build the future of digital solutions? Apply to join our innovative development
@@ -223,7 +209,7 @@ export default function Register() {
                     />
                     <div className="relative">
                       <div
-                        className="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-primary-400 to-primary-600 shadow-2xl cursor-pointer hover:shadow-3xl transition-all duration-300 hover:scale-105"
+                        className="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-primary-400 to-primary-600 shadow-2xl cursor-pointer transition-all duration-300 hover:scale-105"
                         onClick={() => fileInputRef.current?.click()}
                         role="button"
                         tabIndex={0}
@@ -260,7 +246,7 @@ export default function Register() {
                       )}
 
                       {!avatarPreview && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                        <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                           <Camera className="h-8 w-8 text-white" />
                         </div>
                       )}
@@ -550,6 +536,11 @@ export default function Register() {
             </div>
 
             <div className="pt-6">
+              {submitError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 text-sm mb-4">
+                  {submitError}
+                </div>
+              )}
               <button
                 type="submit"
                 disabled={submitting}

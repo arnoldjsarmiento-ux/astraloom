@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://PacificStack.pro',
+        target: 'https://astraloom.pro',
         changeOrigin: true,
         secure: true,
       },

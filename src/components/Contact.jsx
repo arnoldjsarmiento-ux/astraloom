@@ -1,48 +1,15 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
-import {
-  CheckCircle,
-  Clock,
-  Mail,
-  MapPin,
-  Phone,
-  Send,
-} from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowRight, CircleCheck, Clock, Loader2, Mail, MapPin, Phone } from 'lucide-react'
 import { createContact } from '../api/client'
+import { company } from '../data/company'
+import SectionHeading from './SectionHeading'
 
 const contactInfo = [
-  {
-    icon: Mail,
-    title: 'Email Us',
-    details: ['hello@astraloom.pro'],
-    color: 'from-blue-500 to-blue-600',
-  },
-  {
-    icon: Phone,
-    title: 'Call Us',
-    details: ['+63(970) 882 0393'],
-    color: 'from-green-500 to-green-600',
-  },
-  {
-    icon: MapPin,
-    title: 'Visit Us',
-    details: ['Barangay Tañong, Malabon City, 1470 Metro Manila, Philippines'],
-    color: 'from-purple-500 to-purple-600',
-  },
-  {
-    icon: Clock,
-    title: 'Business Hours',
-    details: ['Mon - Fri: 9:00 AM - 6:00 PM', 'Sat: 10:00 AM - 4:00 PM'],
-    color: 'from-orange-500 to-orange-600',
-  },
-]
-
-const reasons = [
-  'Expert team with 50+ years combined experience',
-  'Full-stack development capabilities',
-  'Agile development methodology',
-  '24/7 support and maintenance',
-  'Competitive pricing and transparent billing',
+  { icon: Mail, title: 'Email', lines: [company.email], href: `mailto:${company.email}` },
+  { icon: Phone, title: 'Phone', lines: [company.phone], href: company.phoneHref },
+  { icon: MapPin, title: 'Office', lines: company.address },
+  { icon: Clock, title: 'Business hours', lines: company.hours },
 ]
 
 const projectTypes = [
@@ -92,245 +59,253 @@ export default function Contact() {
     setError('')
 
     try {
-      await createContact({
-        name: form.name,
-        email: form.email,
-        company: form.company,
-        project: form.project,
-        budget: form.budget,
-        message: form.message,
-      })
+      await createContact(form)
       setSubmitted(true)
       setForm(initialForm)
     } catch (err) {
-      // Still show success UX when API is unavailable so local demos work
       console.error('Contact form submission error:', err)
-      setSubmitted(true)
-      setForm(initialForm)
+      setError(
+        `Sorry, we couldn't send your message. Please try again or email us at ${company.email}.`,
+      )
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
-    <section id="contact" className="section-padding bg-white">
+    <section id="contact" className="section-padding bg-ink-50">
       <div className="container-max">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Get In <span className="gradient-text">Touch</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Ready to start your next project? Let&apos;s discuss how we can help bring your vision
-            to life with our expert development team and cutting-edge technology solutions.
-          </p>
-        </motion.div>
+        <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          <div>
+            <SectionHeading
+              align="left"
+              eyebrow="Contact"
+              title={
+                <>
+                  Let&apos;s build something <span className="gradient-text">great together</span>
+                </>
+              }
+              description="Tell us about your project and we'll get back to you within 24 hours with next steps."
+            />
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-2xl font-bold text-gray-900 mb-8">Let&apos;s Start a Conversation</h3>
-            <p className="text-gray-600 mb-8">
-              We&apos;re here to help you succeed. Reach out to us through any of the channels
-              below, and we&apos;ll get back to you within 24 hours.
-            </p>
-
-            <div className="space-y-6">
-              {contactInfo.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-start space-x-4"
-                >
-                  <div
-                    className={`w-12 h-12 rounded-lg bg-gradient-to-r ${item.color} flex items-center justify-center flex-shrink-0`}
-                  >
-                    <item.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">{item.title}</h4>
-                    {item.details.map((detail) => (
-                      <p key={detail} className="text-gray-600 text-sm">
-                        {detail}
-                      </p>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              viewport={{ once: true }}
-              className="mt-12 bg-gray-50 rounded-xl p-6"
-            >
-              <h4 className="font-semibold text-gray-900 mb-4">Why Choose AstraLoom?</h4>
-              <ul className="space-y-2">
-                {reasons.map((reason) => (
-                  <li key={reason} className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    {reason}
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+              {contactInfo.map((item) => {
+                const content = (
+                  <>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-primary-600 shadow-sm ring-1 ring-ink-100">
+                      <item.icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-ink-950">{item.title}</p>
+                      {item.lines.map((line) => (
+                        <p key={line} className="text-sm leading-relaxed text-ink-500">
+                          {line}
+                        </p>
+                      ))}
+                    </div>
+                  </>
+                )
+                return (
+                  <li key={item.title}>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        className="flex items-start gap-4 rounded-xl p-2 -m-2 transition-colors hover:bg-white"
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <div className="flex items-start gap-4">{content}</div>
+                    )}
                   </li>
-                ))}
-              </ul>
-            </motion.div>
-          </motion.div>
+                )
+              })}
+            </ul>
+          </div>
 
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="bg-gray-50 rounded-2xl p-8"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: '-80px' }}
+            className="rounded-3xl border border-ink-100 bg-white p-6 shadow-[0_30px_80px_-40px_rgb(12_18_48/0.35)] sm:p-10"
           >
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Start Your Project</h3>
-
-            {submitted ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-12"
-              >
-                <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                <h4 className="text-xl font-semibold text-gray-900 mb-2">Thank You!</h4>
-                <p className="text-gray-600">
-                  We&apos;ve received your message and will get back to you within 24 hours.
-                </p>
-              </motion.div>
-            ) : (
-              <form onSubmit={onSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      value={form.name}
-                      onChange={onChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                      placeholder="Your full name"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      value={form.email}
-                      onChange={onChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={form.company}
-                    onChange={onChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                    placeholder="Your company name"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="project" className="block text-sm font-medium text-gray-700 mb-2">
-                      Project Type *
-                    </label>
-                    <select
-                      id="project"
-                      name="project"
-                      required
-                      value={form.project}
-                      onChange={onChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                    >
-                      <option value="">Select project type</option>
-                      {projectTypes.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">
-                      Budget Range
-                    </label>
-                    <select
-                      id="budget"
-                      name="budget"
-                      value={form.budget}
-                      onChange={onChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                    >
-                      <option value="">Select budget range</option>
-                      {budgets.map((budget) => (
-                        <option key={budget} value={budget}>
-                          {budget}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    Project Details *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    required
-                    rows={5}
-                    value={form.message}
-                    onChange={onChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors resize-none"
-                    placeholder="Tell us about your project requirements, timeline, and any specific needs..."
-                  />
-                </div>
-
-                {error && <p className="text-red-600 text-sm">{error}</p>}
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full btn-primary flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+            <AnimatePresence mode="wait">
+              {submitted ? (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex min-h-[28rem] flex-col items-center justify-center text-center"
+                  role="status"
                 >
-                  {submitting ? 'Sending...' : 'Send Message'}
-                  <Send className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </form>
-            )}
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 ring-8 ring-emerald-50/50">
+                    <CircleCheck className="h-8 w-8 text-emerald-500" />
+                  </div>
+                  <h3 className="mt-6 text-2xl font-semibold text-ink-950">Thank you!</h3>
+                  <p className="mt-2 max-w-sm text-ink-500">
+                    We&apos;ve received your message and will get back to you within 24 hours.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setSubmitted(false)}
+                    className="btn-secondary mt-8"
+                  >
+                    Send another message
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.form
+                  key="form"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onSubmit={onSubmit}
+                  className="space-y-5"
+                >
+                  <div>
+                    <h3 className="text-xl font-semibold text-ink-950">Start your project</h3>
+                    <p className="mt-1 text-sm text-ink-500">Fields marked * are required.</p>
+                  </div>
+
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="name" className="field-label">
+                        Full name *
+                      </label>
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        required
+                        value={form.name}
+                        onChange={onChange}
+                        className="field"
+                        placeholder="Jane Doe"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="field-label">
+                        Work email *
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        value={form.email}
+                        onChange={onChange}
+                        className="field"
+                        placeholder="jane@company.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="company" className="field-label">
+                      Company
+                    </label>
+                    <input
+                      id="company"
+                      name="company"
+                      type="text"
+                      autoComplete="organization"
+                      value={form.company}
+                      onChange={onChange}
+                      className="field"
+                      placeholder="Your company name"
+                    />
+                  </div>
+
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="project" className="field-label">
+                        Project type *
+                      </label>
+                      <select
+                        id="project"
+                        name="project"
+                        required
+                        value={form.project}
+                        onChange={onChange}
+                        className="field"
+                      >
+                        <option value="">Select project type</option>
+                        {projectTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="budget" className="field-label">
+                        Budget range
+                      </label>
+                      <select
+                        id="budget"
+                        name="budget"
+                        value={form.budget}
+                        onChange={onChange}
+                        className="field"
+                      >
+                        <option value="">Select budget range</option>
+                        {budgets.map((budget) => (
+                          <option key={budget} value={budget}>
+                            {budget}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="message" className="field-label">
+                      Project details *
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      required
+                      rows={5}
+                      value={form.message}
+                      onChange={onChange}
+                      className="field resize-none"
+                      placeholder="Tell us about your goals, timeline and any specific requirements..."
+                    />
+                  </div>
+
+                  {error && (
+                    <p
+                      role="alert"
+                      className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                    >
+                      {error}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="btn-primary group w-full py-3.5 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {submitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        Send message
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </>
+                    )}
+                  </button>
+                </motion.form>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
       </div>

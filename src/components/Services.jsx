@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion'
 import {
-  Code,
+  Check,
   Cloud,
+  Code,
   Cpu,
   Database,
   GitBranch,
@@ -16,6 +17,7 @@ import {
 import { getServices } from '../api/client'
 import { useAsyncData } from '../hooks/useAsyncData'
 import servicesFallback from '../data/services.json'
+import SectionHeading from './SectionHeading'
 
 const iconMap = {
   Code,
@@ -32,173 +34,57 @@ const iconMap = {
   Server,
 }
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-}
-
-const stackCoverage = [
-  {
-    icon: Monitor,
-    title: 'Frontend',
-    description: 'React, Vue, Angular, TypeScript',
-    bg: 'bg-blue-100',
-    color: 'text-blue-600',
-  },
-  {
-    icon: Server,
-    title: 'Backend',
-    description: 'Node.js, Python, Java, PHP',
-    bg: 'bg-green-100',
-    color: 'text-green-600',
-  },
-  {
-    icon: Smartphone,
-    title: 'Mobile',
-    description: 'React Native, Flutter',
-    bg: 'bg-purple-100',
-    color: 'text-purple-600',
-  },
-  {
-    icon: Cloud,
-    title: 'Cloud & DevOps',
-    description: 'AWS, Azure, Docker, K8s',
-    bg: 'bg-orange-100',
-    color: 'text-orange-600',
-  },
-]
-
-function resolveIcon(name) {
-  return iconMap[name] || Code
-}
-
 export default function Services() {
-  const { data, loading, error } = useAsyncData(async () => {
-    try {
-      return await getServices({ isActive: true })
-    } catch {
-      return servicesFallback.data
-    }
-  }, [])
-
-  if (loading) {
-    return (
-      <section id="services" className="py-20 bg-gray-50">
-        <div className="container-max section-padding">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4" />
-            <p className="text-gray-600">Loading services...</p>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  if (error && (!data || data.length === 0)) {
-    return (
-      <section id="services" className="py-20 bg-gray-50">
-        <div className="container-max section-padding">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">Failed to load services</p>
-            <p className="text-gray-600">Please try again later</p>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  const services = data?.length ? data : servicesFallback.data
+  const { data } = useAsyncData(async () => {
+    const services = await getServices({ isActive: true })
+    return services.length ? services : null
+  }, servicesFallback.data)
 
   return (
-    <section id="services" className="py-20 bg-gray-50">
-      <div className="container-max section-padding">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Our <span className="gradient-text">Services</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive IT development services covering every aspect of modern software
-            development, from frontend to backend, mobile to cloud, and everything in between.
-          </p>
-        </motion.div>
+    <section id="services" className="section-padding bg-white">
+      <div className="container-max">
+        <SectionHeading
+          eyebrow="What we do"
+          title={
+            <>
+              End-to-end engineering for <span className="gradient-text">every layer</span> of
+              your product
+            </>
+          }
+          description="From the first interface your customers see to the infrastructure that keeps it running — one team, accountable for the whole stack."
+        />
 
-        <motion.div
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-          }}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-        >
-          {services.map((service) => {
-            const Icon = resolveIcon(typeof service.icon === 'string' ? service.icon : 'Code')
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {data.map((service, index) => {
+            const Icon = iconMap[service.icon] || Code
             return (
-              <motion.div
+              <motion.article
                 key={service.id || service.title}
-                variants={cardVariants}
-                className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: (index % 4) * 0.08 }}
+                viewport={{ once: true, margin: '-60px' }}
+                className="group relative flex flex-col rounded-2xl border border-ink-100 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary-200 hover:shadow-[0_20px_50px_-20px_rgb(75_70_229/0.25)]"
               >
-                <div
-                  className={`w-12 h-12 rounded-lg bg-gradient-to-r ${service.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <Icon className="h-6 w-6 text-white" />
+                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600 to-accent-500 text-white shadow-lg shadow-primary-600/20 transition-transform duration-300 group-hover:scale-105">
+                  <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{service.title}</h3>
-                <p className="text-gray-600 mb-4 text-sm leading-relaxed">{service.description}</p>
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-700">Technologies:</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {service.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-primary-100 hover:text-primary-600 transition-colors duration-200"
-                      >
-                        {tech}
-                      </span>
+                <h3 className="text-lg font-semibold text-ink-950">{service.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-500">{service.description}</p>
+                {service.features?.length > 0 && (
+                  <ul className="mt-5 space-y-2 border-t border-ink-100 pt-5">
+                    {service.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2 text-sm text-ink-600">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
+                        {feature}
+                      </li>
                     ))}
-                  </div>
-                </div>
-              </motion.div>
+                  </ul>
+                )}
+              </motion.article>
             )
           })}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="mt-20 bg-white rounded-2xl p-8 shadow-lg"
-        >
-          <div className="text-center mb-8">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">Complete Tech Stack Coverage</h3>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              We stay current with the latest technologies and frameworks to deliver cutting-edge
-              solutions that meet modern business requirements.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {stackCoverage.map((item) => (
-              <div key={item.title} className="text-center">
-                <div
-                  className={`w-16 h-16 ${item.bg} rounded-full flex items-center justify-center mx-auto mb-4`}
-                >
-                  <item.icon className={`h-8 w-8 ${item.color}`} />
-                </div>
-                <h4 className="font-semibold text-gray-900 mb-2">{item.title}</h4>
-                <p className="text-sm text-gray-600">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

@@ -1,26 +1,26 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-export function useAsyncData(fetcher, deps = []) {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
+// Runs `fetcher` once on mount. `initialData` renders immediately so sections
+// never flash a spinner; the fetched result replaces it when it arrives.
+export function useAsyncData(fetcher, initialData = null) {
+  const [data, setData] = useState(initialData)
   const [error, setError] = useState(null)
-
-  const refetch = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const result = await fetcher()
-      setData(result)
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('An error occurred'))
-    } finally {
-      setLoading(false)
-    }
-  }, deps)
+  const fetcherRef = useRef(fetcher)
 
   useEffect(() => {
-    refetch()
-  }, [refetch])
+    let cancelled = false
+    fetcherRef
+      .current()
+      .then((result) => {
+        if (!cancelled && result != null) setData(result)
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err : new Error('An error occurred'))
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
-  return { data, loading, error, refetch }
+  return { data, error }
 }

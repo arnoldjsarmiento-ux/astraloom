@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { ArrowLeft, Code, Cloud, Database, Lock, Smartphone } from 'lucide-react'
+import { ArrowLeft, Lock } from 'lucide-react'
+import Logo from '../components/Logo'
 
 export default function Admin() {
   return (
@@ -14,16 +15,9 @@ export default function Admin() {
         </Link>
 
         <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
-          <div className="flex items-center space-x-2 mb-6">
-            <div className="flex items-center space-x-1">
-              <img
-                src="/logo.png"
-                alt="AstraLoom"
-                className="h-10 w-auto object-contain"
-              />
-            </div>
-            <span className="text-xl font-bold gradient-text">AstraLoom</span>
-          </div>
+          <Link to="/" className="flex mb-6" aria-label="AstraLoom home">
+            <Logo />
+          </Link>
 
           <div className="flex items-center space-x-3 mb-6">
             <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 flex items-center justify-center">

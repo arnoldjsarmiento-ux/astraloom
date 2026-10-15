@@ -2,16 +2,21 @@ const API_BASE = import.meta.env.VITE_API_URL || '/api'
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
     },
-    ...options,
   })
 
-  const data = await response.json()
-  if (!response.ok) {
-    throw new Error(data.error || 'Request failed')
+  let data
+  try {
+    data = await response.json()
+  } catch {
+    throw new Error(`Unexpected response from server (${response.status})`)
+  }
+  if (!response.ok || data?.success === false) {
+    throw new Error(data?.error || 'Request failed')
   }
   return data
 }
@@ -42,18 +47,16 @@ export async function getProjects(params = {}) {
   return result.data || []
 }
 
-export async function getTeamMembers(params = {}) {
-  const search = new URLSearchParams()
-  if (params.status) search.set('status', params.status)
-  if (params.sortBy) search.set('sortBy', params.sortBy)
-  if (params.sortOrder) search.set('sortOrder', params.sortOrder)
-  const qs = search.toString()
-  const result = await request(`/team${qs ? `?${qs}` : ''}`)
-  return result.data || []
-}
-
 export async function createContact(payload) {
   const result = await request('/contacts', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+  return result.data
+}
+
+export async function createTeamRegistration(payload) {
+  const result = await request('/team-registrations', {
     method: 'POST',
     body: JSON.stringify(payload),
   })

@@ -1,228 +1,185 @@
 import { useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
-import {
-  Code,
-  Cloud,
-  Database,
-  ExternalLink,
-  Smartphone,
-} from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowUpRight, Clock, Users } from 'lucide-react'
 import { GitHubIcon } from './icons'
 import { getProjects } from '../api/client'
 import { useAsyncData } from '../hooks/useAsyncData'
 import projectsFallback from '../data/projects.json'
+import SectionHeading from './SectionHeading'
 
-const categories = [
-  'All',
-  'Web Application',
-  'Mobile App',
-  'Data Analytics',
-  'Cloud Solutions',
-  'IoT Solutions',
-]
-
-const categoryIcons = {
-  'Web Application': Code,
-  'Mobile App': Smartphone,
-  'Data Analytics': Database,
-  'Cloud Solutions': Cloud,
-  'IoT Solutions': Cloud,
-}
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-}
+const MAX_TAGS = 4
 
 export default function Portfolio() {
   const [activeCategory, setActiveCategory] = useState('All')
 
-  const { data, loading, error } = useAsyncData(async () => {
-    try {
-      return await getProjects({ status: 'published', limit: 100 })
-    } catch {
-      return projectsFallback.data
-    }
-  }, [])
+  const { data: projects } = useAsyncData(async () => {
+    const items = await getProjects({ status: 'published', limit: 100 })
+    return items.length ? items : null
+  }, projectsFallback.data)
 
-  const projects = data?.length ? data : projectsFallback.data
+  // Only offer filters that match at least one project
+  const categories = useMemo(
+    () => ['All', ...new Set(projects.map((project) => project.category).filter(Boolean))],
+    [projects],
+  )
 
   const filtered = useMemo(() => {
     if (activeCategory === 'All') return projects
     return projects.filter((project) => project.category === activeCategory)
   }, [projects, activeCategory])
 
-  if (loading) {
-    return (
-      <section id="portfolio" className="py-20 bg-white">
-        <div className="container-max section-padding">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4" />
-            <p className="text-gray-600">Loading projects...</p>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  if (error && (!data || data.length === 0)) {
-    return (
-      <section id="portfolio" className="py-20 bg-white">
-        <div className="container-max section-padding">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">Failed to load projects</p>
-            <p className="text-gray-600">Please try again later</p>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
   return (
-    <section id="portfolio" className="py-20 bg-white">
-      <div className="container-max section-padding">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Our <span className="gradient-text">Portfolio</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Explore our diverse portfolio of successful projects across various industries and
-            technologies. Each project represents our commitment to excellence and innovation.
-          </p>
-        </motion.div>
+    <section id="portfolio" className="section-padding bg-white">
+      <div className="container-max">
+        <div className="mb-12 flex flex-col gap-8 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
+          <SectionHeading
+            flush
+            align="left"
+            eyebrow="Selected work"
+            title={
+              <>
+                Products we&apos;ve <span className="gradient-text">helped build</span>
+              </>
+            }
+            description="A selection of web platforms, mobile apps and websites we've delivered for our clients."
+          />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-4 mb-12"
-        >
-          {categories.map((category) => (
-            <button
-              key={category}
-              type="button"
-              onClick={() => setActiveCategory(category)}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                activeCategory === category
-                  ? 'bg-primary-600 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-600 hover:bg-primary-100 hover:text-primary-600'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </motion.div>
-
-        <motion.div
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-          }}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {filtered.map((project) => {
-            const CategoryIcon = categoryIcons[project.category] || Code
-            return (
-              <motion.div
-                key={project.id || project.title}
-                variants={cardVariants}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group"
-              >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute top-4 left-4">
-                    <div className="flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full text-white text-sm font-medium">
-                      <CategoryIcon className="h-4 w-4" />
-                      <span>{project.category}</span>
-                    </div>
-                  </div>
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="flex space-x-2">
-                      {project.liveUrl && (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-                          aria-label="Live site"
-                        >
-                          <ExternalLink className="h-4 w-4 text-white" />
-                        </a>
-                      )}
-                      {project.githubUrl && (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-                          aria-label="GitHub"
-                        >
-                          <GitHubIcon className="h-4 w-4 text-white" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4 text-sm leading-relaxed line-clamp-3">
-                    {project.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md hover:bg-primary-100 hover:text-primary-600 transition-colors duration-200"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            )
-          })}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
-          <div className="bg-gradient-to-r from-primary-600 to-primary-800 rounded-2xl p-8 text-white">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Ready to Start Your Next Project?
-            </h3>
-            <p className="text-primary-100 mb-6 max-w-2xl mx-auto">
-              Let&apos;s discuss how we can bring your vision to life with cutting-edge technology
-              and expert development practices.
-            </p>
-            <a
-              href="#contact"
-              className="inline-block bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
-            >
-              Get Started Today
-            </a>
+          <div
+            role="tablist"
+            aria-label="Filter projects by category"
+            className="inline-flex max-w-full shrink-0 self-start overflow-x-auto rounded-xl border border-ink-100 bg-ink-50 p-1 lg:self-auto"
+          >
+            {categories.map((category) => {
+              const active = activeCategory === category
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setActiveCategory(category)}
+                  className={`relative whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    active ? 'text-ink-950' : 'text-ink-500 hover:text-ink-800'
+                  }`}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="portfolio-tab"
+                      className="absolute inset-0 rounded-lg bg-white shadow-sm ring-1 ring-ink-100"
+                      transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+                    />
+                  )}
+                  <span className="relative">{category}</span>
+                </button>
+              )
+            })}
           </div>
+        </div>
+
+        <motion.div layout className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((project) => {
+              const tags = project.technologies || []
+              return (
+                <motion.article
+                  layout
+                  key={project.id || project.title}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  transition={{ duration: 0.3 }}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-ink-100 bg-white transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgb(12_18_48/0.25)]"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden bg-ink-100">
+                    <img
+                      src={project.image}
+                      alt=""
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink-950/50 via-transparent to-transparent" />
+                    <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-ink-800 backdrop-blur">
+                      {project.category}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-1 flex-col p-6">
+                    {project.client && (
+                      <p className="text-xs font-semibold uppercase tracking-wider text-primary-600">
+                        {project.client}
+                      </p>
+                    )}
+                    <h3 className="mt-2 text-lg font-semibold leading-snug text-ink-950">
+                      {project.title}
+                    </h3>
+                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink-500">
+                      {project.description}
+                    </p>
+
+                    <div className="mt-5 flex flex-wrap gap-1.5">
+                      {tags.slice(0, MAX_TAGS).map((tech) => (
+                        <span
+                          key={tech}
+                          className="rounded-md bg-ink-50 px-2 py-1 text-xs font-medium text-ink-600 ring-1 ring-ink-100"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                      {tags.length > MAX_TAGS && (
+                        <span className="rounded-md px-2 py-1 text-xs font-medium text-ink-400">
+                          +{tags.length - MAX_TAGS}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mt-auto pt-6">
+                      <div className="flex items-center justify-between gap-4 border-t border-ink-100 pt-5">
+                        <div className="flex items-center gap-4 text-xs text-ink-500">
+                          {project.duration && (
+                            <span className="inline-flex items-center gap-1.5">
+                              <Clock className="h-3.5 w-3.5" />
+                              {project.duration}
+                            </span>
+                          )}
+                          {project.teamSize && (
+                            <span className="inline-flex items-center gap-1.5">
+                              <Users className="h-3.5 w-3.5" />
+                              {project.teamSize} people
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {project.githubUrl && (
+                            <a
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded-lg p-2 text-ink-500 transition-colors hover:bg-ink-50 hover:text-ink-950"
+                              aria-label={`${project.title} source code`}
+                            >
+                              <GitHubIcon className="h-4 w-4" />
+                            </a>
+                          )}
+                          {project.liveUrl && (
+                            <a
+                              href={project.liveUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-semibold text-primary-600 transition-colors hover:bg-primary-50"
+                              aria-label={`Visit ${project.title}`}
+                            >
+                              Visit
+                              <ArrowUpRight className="h-4 w-4" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.article>
+              )
+            })}
+          </AnimatePresence>
         </motion.div>
       </div>
     </section>
